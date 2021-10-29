@@ -1,0 +1,41 @@
+-- MARK: homework
+--1
+select a.*
+from   employee a, employee b
+where  b.id = a.chief_id
+and    a.salary > b.salary;
+
+--новый способ через join
+/*select e1.name,
+       e1.salary as employee_salary,
+       e2.salary as chief_salary
+from employee as e1
+    left join employee as e2
+        on e1.chief_id = e2.id
+where employee_salary > chief_salary;*/
+--2
+select * from employee e
+where e.salary =
+      (select max(e1.salary)
+      from employee e1
+      where e1.department_id = e.department_id)
+limit 10;
+
+--3
+select e.department_id from employee e
+group by e.department_id
+having count(e.department_id) <=3;
+
+--4-
+select e.name, e.department_id, e2.department_id from employee e
+    left join first_class.employee e2 on e.chief_id = e2.id
+where e.department_id != e2.department_id or e.chief_id is null;
+
+--5
+with sum_salary as
+  ( select department_id, sum(salary) as sum
+    from   employee
+    group  by department_id )
+select department_id
+from   sum_salary sum1
+where  sum1.sum = ( select max(sum) from sum_salary);
